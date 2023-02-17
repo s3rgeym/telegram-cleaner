@@ -15,7 +15,7 @@ class Cleaner:
     # За использование данных от приложения Телеграма меня забанили
     # https://qna.habr.com/q/1185562
     client_name: str = "cleaner"
-    api_id: str = getenv("TG_API_ID", 24439609)
+    api_id: int = int(getenv("TG_API_ID", 24439609))
     api_hash: str = getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d")
     # app_version: str = ""
     # device_model: str = ""
