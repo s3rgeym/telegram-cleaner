@@ -3,30 +3,25 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import KW_ONLY, dataclass
-from os import getenv
 from typing import Any, Iterator
 
 from pyrogram import Client, enums, errors, raw, types
 
 
+# За использование данных от приложения Телеграма меня забанили
+# https://qna.habr.com/q/1185562
 @dataclass
 class Cleaner:
+    api_id: int | str
+    api_hash: str
     _: KW_ONLY
-    # За использование данных от приложения Телеграма меня забанили
-    # https://qna.habr.com/q/1185562
-    client_name: str = "cleaner"
-    api_id: int = int(getenv("TG_API_ID", 24439609))
-    api_hash: str = getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d")
-    # app_version: str = ""
-    # device_model: str = ""
-    # system_version: str = ""
     confirm_all: bool = False
     log_level: int | str = logging.DEBUG
 
     def __post_init__(self) -> None:
         self.setup_logger()
         self.client = Client(
-            self.client_name,
+            __package__,
             api_id=self.api_id,
             api_hash=self.api_hash,
             # app_version=self.app_version,
