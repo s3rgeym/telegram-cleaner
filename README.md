@@ -30,7 +30,7 @@ $ tg-clean dump_chats > chats_dump.json
 $ tg-clean delete_group_messages
 
 # delete private chats
-$ tg-clean -y delete_private_chats
+$ tg-clean -vvy delete_private_chats
 
 # delete all your messages
 $ tg-clean
