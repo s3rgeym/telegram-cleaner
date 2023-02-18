@@ -1,10 +1,10 @@
 import argparse
-import asyncio
 import logging
 from os import getenv
 from typing import Sequence
 
 from .cleaner import Cleaner
+from .utils import make_sync
 
 
 class NameSpace(argparse.Namespace):
@@ -48,17 +48,14 @@ def parse_args(argv: Sequence[str] | None) -> NameSpace:
     return parser.parse_args(argv)
 
 
-def main(argv: Sequence[str] | None = None) -> None:
+@make_sync
+async def cli(argv: Sequence[str] | None = None) -> None:
     logging.basicConfig()
     args = parse_args(argv)
-    logging_lvl = max(logging.DEBUG, logging.WARNING - args.verbosity * 10)
-
-    async def run() -> None:
-        async with Cleaner(
-                api_id=int(getenv("TG_API_ID", 24439609)),
-                api_hash=getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d"),
-                confirm_all=args.yes, 
-                log_level=logging_lvl) as cleaner:
-            await getattr(cleaner, args.command)()
-
-    asyncio.run(run())
+    log_lvl = max(logging.DEBUG, logging.WARNING - args.verbosity * 10)
+    async with Cleaner(
+            api_id=int(getenv("TG_API_ID", 24439609)),
+            api_hash=getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d"),
+            confirm_all=args.yes, 
+            log_level=log_lvl) as cleaner:
+        await getattr(cleaner, args.command)()
