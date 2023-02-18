@@ -1,4 +1,4 @@
-# Telegram Cleaner
+# Telegram Cleaner ♻️
 
 Delete all your messages of any type.
 
