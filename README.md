@@ -22,9 +22,9 @@ Usage:
 # see help
 $ tg-clean -h
 
-# first save chat usernames and indetifiers
+# first save chat usernames and indetifiers in json format
 # hint: you can use jq for search in json
-$ tg-clean print_chats > chats.dump.json
+$ tg-clean dump_chats > chats.dump.json
 
 # delete messages in group chats, comments, posts
 $ tg-clean delete_group_messages
