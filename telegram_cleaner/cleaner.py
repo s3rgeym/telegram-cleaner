@@ -208,7 +208,7 @@ class Cleaner:
     async def dump_chats(self) -> None:
         try:
             chats = await self.get_chats()
-            print("[\n" + ",\n".join(map(str, chats)) + "\n]", flush=True)
+            print("[" + ",".join(map(str, chats)) + "]", flush=True)
         except Exception as e:
             self.log.exception(e)
 
