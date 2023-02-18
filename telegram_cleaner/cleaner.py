@@ -8,8 +8,6 @@ from typing import Any, Iterator
 from pyrogram import Client, enums, errors, raw, types
 
 
-# За использование данных от приложения Телеграма меня забанили
-# https://qna.habr.com/q/1185562
 @dataclass
 class Cleaner:
     api_id: int | str
@@ -201,7 +199,7 @@ class Cleaner:
         except Exception as e:
             self.log.error(e)
 
-    async def run_all(self) -> None:
+    async def clean(self) -> None:
         await self.delete_contacts()
         await self.delete_group_messages()
         await self.delete_private_chats()
@@ -218,6 +216,12 @@ class Cleaner:
     async def print_me(self) -> None:
         try:
             print(await self.client.get_me())
+        except Exception as e:
+            self.log.exception(e)
+            
+    async def logout(self) -> None:
+        try:
+            print(await self.client.log_out())
         except Exception as e:
             self.log.exception(e)
 
