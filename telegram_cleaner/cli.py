@@ -35,9 +35,9 @@ def parse_args(argv: Sequence[str] | None) -> NameSpace:
         "delete_group_messages": "delete any type messages in groups including own posts",
         "leave_groups": "leave groups",
         "delete_private_chats": "delete private chat messages",
-        "print_chats": "print chats debug info",
-        "print_me": "print loggined user debug info",
-        "logout": "terminate session",
+        "dump_chats": "dump chats debug info",
+        "dump_me": "dump loggined user debug info",
+        "logout": "terminate current session",
     }
 
     subparsers = parser.add_subparsers(help="commands")
