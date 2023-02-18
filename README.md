@@ -33,7 +33,7 @@ $ tg-clean delete_group_messages
 $ tg-clean -y delete_private_chats
 
 # delete all your messages
-$ tg-clean -vvy
+$ tg-clean
 
 # You can use you own API_ID and API_HASH
 # Also you can use .env files with zsh dotenv plugin
