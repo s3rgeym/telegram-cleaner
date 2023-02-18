@@ -22,7 +22,7 @@ Usage:
 # see help
 $ tg-clean -h
 
-# first save your chats
+# first save your chats because the data exported by telegram does not have information about group and user IDs
 $ tg-clean dump_chats > mychats.json
 
 # later you can extract data from this file using jq
