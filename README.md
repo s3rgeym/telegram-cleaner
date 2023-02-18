@@ -25,8 +25,9 @@ $ tg-clean -h
 # first save your chats because the data exported by telegram does not have information about group and user IDs
 $ tg-clean dump_chats > mychats.json
 
-# later you can extract data from this file using jq
-$ jq -r '.[] | "\( .id ) \( .username  ) " + if has("title") then .title else "\( .first_name ) \( .last_name  )" end' mychats.json
+# you can extract data from this file using jq
+$ jq -r '.[] | "\( .id ) \( .username  ) " +  if has("title") then .title 
+  else "\( .first_name ) \( .last_name  )" end' mychats.json
 777000 null Telegram null
 -1001436354653 nwsru NEWS.ru | Новости
 ...
