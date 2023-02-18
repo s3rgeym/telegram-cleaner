@@ -1,4 +1,5 @@
-import functootls
+import asyncio
+import functools
 from typing import Any, Awaitable, Callable
 
 
@@ -6,6 +7,7 @@ def make_sync(func: Awaitable) -> Callable:
     @functools.wraps(func)
     def wrapper(*args: Any, **kwargs: Any) -> Any:
         return asyncio.run(func(*args, **kwargs))
+
     return wrapper
 
 

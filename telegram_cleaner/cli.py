@@ -54,8 +54,9 @@ async def cli(argv: Sequence[str] | None = None) -> None:
     args = parse_args(argv)
     log_lvl = max(logging.DEBUG, logging.WARNING - args.verbosity * 10)
     async with Cleaner(
-            api_id=int(getenv("TG_API_ID", 24439609)),
-            api_hash=getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d"),
-            confirm_all=args.yes, 
-            log_level=log_lvl) as cleaner:
+        api_id=int(getenv("TG_API_ID", 24439609)),
+        api_hash=getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d"),
+        confirm_all=args.yes,
+        log_level=log_lvl,
+    ) as cleaner:
         await getattr(cleaner, args.command)()

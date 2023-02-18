@@ -217,7 +217,7 @@ class Cleaner:
             print(await self.client.get_me())
         except Exception as e:
             self.log.exception(e)
-            
+
     async def logout(self) -> None:
         try:
             print(await self.client.log_out())

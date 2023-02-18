@@ -22,15 +22,20 @@ Usage:
 # see help
 $ tg-clean -h
 
-# first save chat usernames and indetifiers in json format
-# hint: you can use jq for search in json
-$ tg-clean dump_chats > chats_dump.json
+# first save your chats
+$ tg-clean dump_chats > mychats.json
+
+# later you can extract data from this file using jq
+$ jq -r '.[] | "\( .id ) \( .username  ) " + if has("title") then .title else "\( .first_name ) \( .last_name  )" end' mychats.json
+777000 null Telegram null
+-1001436354653 nwsru NEWS.ru | Новости
+...
 
 # delete messages in group chats, comments, posts
-$ tg-clean delete_group_messages
+$ tg-clean -vv delete_group_messages
 
-# delete private chats
-$ tg-clean -vvy delete_private_chats
+# delete private chats without confirmation
+$ tg-clean -y delete_private_chats
 
 # delete all your messages of any type
 $ tg-clean
