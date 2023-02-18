@@ -205,14 +205,14 @@ class Cleaner:
         await self.delete_private_chats()
         await self.leave_groups()
 
-    async def print_chats(self) -> None:
+    async def dump_chats(self) -> None:
         try:
             chats = await self.get_chats()
             print('[' + ','.join(map(str, chats)) + ']', flush=True)
         except Exception as e:
             self.log.exception(e)
 
-    async def print_me(self) -> None:
+    async def dump_me(self) -> None:
         try:
             print(await self.client.get_me())
         except Exception as e:
