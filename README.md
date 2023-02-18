@@ -35,9 +35,9 @@ $ tg-clean -y delete_private_chats
 # delete all your messages
 $ tg-clean -vvy
 
-# You cand use you own telegram application
-# Add this lines to ~/.bashrc or ~/.zshrc
+# You can use you own API_ID and API_HASH
 # Also you can use .env files with zsh dotenv plugin
+# Add this lines to ~/.bashrc or ~/.zshrc
 export TG_API_ID=6
 export TG_API_HASH=eb06d4abfb49dc3eeb1aeb98ae0f581e
 ```
