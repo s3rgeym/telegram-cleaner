@@ -26,13 +26,13 @@ $ tg-clean -h
 $ tg-clean print_chats > chats.dump.txt 
 
 # delete messages in group chats, comments, posts
-$ tg-clean -vvy delete_group_messages
+$ tg-clean delete_group_messages
 
 # delete private chats
-$ tg-clean -vvy delete_private_chats
+$ tg-clean -y delete_private_chats
 
 # delete all your messages
-$ tg-clean
+$ tg-clean -vvy
 
 # You cand use you own telegram application
 # Add this lines to ~/.bashrc or ~/.zshrc
