@@ -19,17 +19,20 @@ $ pipx install telegram-cleaner
 Usage:
 
 ```bash
-# Show help and exit
+# see help
 $ tg-clean -h
 
-# Run all
-$ tg-clean
+# first save chat usernames and indetifiers
+$ tg-clean print_chats > chats.dump.txt 
 
-# Delete only private chats
+# delete messages in group chats, comments, posts
+$ tg-clean -vvy delete_group_messages
+
+# delete private chats
 $ tg-clean -vvy delete_private_chats
 
-# Output chats with identifiers
-$ tg-clean print_chats
+# delete all your messages
+$ tg-clean
 
 # You cand use you own telegram application
 # Add this lines to ~/.bashrc or ~/.zshrc
