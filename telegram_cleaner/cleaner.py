@@ -208,8 +208,7 @@ class Cleaner:
     async def print_chats(self) -> None:
         try:
             chats = await self.get_chats()
-            for chat in chats:
-                print(chat)
+            print('[' + ','.join(map(str, chats)) + ']', flush=True)
         except Exception as e:
             self.log.exception(e)
 
