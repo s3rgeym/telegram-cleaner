@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging
+from os import getenv
 from typing import Sequence
 
 from .cleaner import Cleaner
@@ -27,32 +28,37 @@ def parse_args(argv: Sequence[str] | None) -> NameSpace:
         action="count",
         default=0,
     )
-    parser.set_defaults(command="run_all")
+    parser.set_defaults(command="clean")
 
-    additional_commands = {
+    command_methods = {
         "delete_contacts": "delete contacts",
-        "delete_group_messages": "delete group messages",
+        "delete_group_messages": "delete any type messages in groups including own posts",
         "leave_groups": "leave groups",
-        "delete_private_chats": "delete private chats",
-        "print_chats": "print chats information",
-        "print_me": "print loggined user",
+        "delete_private_chats": "delete private chat messages",
+        "print_chats": "print chats debug info",
+        "print_me": "print loggined user debug info",
+        "logout": "terminate session",
     }
 
-    subp = parser.add_subparsers(help="commands")
+    subparsers = parser.add_subparsers(help="commands")
 
-    for k, v in additional_commands.items():
-        p = subp.add_parser(k, help=v)
-        p.set_defaults(command=k)
+    for name, description in command_methods.items():
+        _parser = subparsers.add_parser(name, help=description)
+        _parser.set_defaults(command=name)
     return parser.parse_args(argv)
 
 
 def main(argv: Sequence[str] | None = None) -> None:
     logging.basicConfig()
     args = parse_args(argv)
-    lvl = max(logging.DEBUG, logging.WARNING - args.verbosity * 10)
+    logging_lvl = max(logging.DEBUG, logging.WARNING - args.verbosity * 10)
 
     async def run() -> None:
-        async with Cleaner(confirm_all=args.yes, log_level=lvl) as cleaner:
+        async with Cleaner(
+                api_id=int(getenv("TG_API_ID", 24439609)),
+                api_hash=getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d"),
+                confirm_all=args.yes, 
+                log_level=logging_lvl) as cleaner:
             await getattr(cleaner, args.command)()
 
     asyncio.run(run())
