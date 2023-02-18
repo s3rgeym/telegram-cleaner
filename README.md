@@ -19,8 +19,26 @@ $ pipx install telegram-cleaner
 Usage:
 
 ```bash
-# see help
 $ tg-clean -h
+usage: tg-clean [-h] [-y | --yes | --no-yes] [-v] {delete_contacts,delete_group_messages,leave_groups,delete_private_chats,dump_chats,dump_me,logout} ...
+
+positional arguments:
+  {delete_contacts,delete_group_messages,leave_groups,delete_private_chats,dump_chats,dump_me,logout}
+                        commands
+    delete_contacts     delete contacts
+    delete_group_messages
+                        delete any type messages in groups including own posts
+    leave_groups        leave groups
+    delete_private_chats
+                        delete private chat messages
+    dump_chats          dump chats debug info
+    dump_me             dump loggined user debug info
+    logout              terminate current session
+
+options:
+  -h, --help            show this help message and exit
+  -y, --yes, --no-yes   confirm all
+  -v, --verbosity       increase verbosity
 
 # first save your chats because the data exported by telegram does not have information about group and user IDs
 $ tg-clean dump_chats > mychats.json
