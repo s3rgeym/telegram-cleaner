@@ -32,7 +32,7 @@ $ tg-clean delete_group_messages
 # delete private chats
 $ tg-clean -vvy delete_private_chats
 
-# delete all your messages
+# delete all your messages of any type
 $ tg-clean
 
 # You can use you own API_ID and API_HASH
