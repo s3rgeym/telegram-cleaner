@@ -73,12 +73,15 @@ class Cleaner:
             chat
             for chat in await self.get_chats()
             if chat.type in [enums.ChatType.PRIVATE, enums.ChatType.BOT]
-            # Аккаунт поддержки имеет ID#777000, удаление диалога с ним выглядит как взлом
-            and not chat.is_support
         ]
 
     def keep_chat(self, chat: types.Chat) -> bool:
-        return chat.id in self.keep_chats or chat.username in self.keep_chats
+        return (
+            chat.id in self.keep_chats
+            or getattr(chat, "username", None) in self.keep_chats
+            # Аккаунт поддержки имеет ID#777000, удаление диалога с ним выглядит как взлом
+            or getattr(chat, "is_support", False)
+        )
 
     async def delete_private_chats(self) -> None:
         if not self.confirm_all and not self.confirm("Delete private chats"):
