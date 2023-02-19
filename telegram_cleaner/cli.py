@@ -18,7 +18,7 @@ def normalize_identifier(s: str) -> str | int:
     try:
         return int(s)
     except ValueError:
-        return s[s.startswith("@") :]
+        return (s := s.strip())[s.startswith('@') :]
 
 
 def parse_identifiers(v: str) -> list[str | int]:
