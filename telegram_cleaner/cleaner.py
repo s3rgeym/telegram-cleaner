@@ -5,7 +5,13 @@ import logging
 from dataclasses import KW_ONLY, dataclass
 from typing import Any, Iterator
 
-from pyrogram import Client, enums, errors, raw, types
+from pyrogram import (
+    Client,
+    enums,
+    errors,
+    raw,
+    types,
+)
 
 
 @dataclass
@@ -59,46 +65,69 @@ class Cleaner:
             rv.append(dialog.chat)
         return rv
 
+    async def get_private_chats(
+        self,
+    ) -> list[types.Chat]:
+        return [
+            chat
+            for chat in await self.get_chats()
+            # Аккаунт поддержки имеет ID#777000, удаление диалога с ним выглядит как взлом
+            if chat.type == enums.ChatType.PRIVATE and not chat.is_support
+        ]
+
     async def delete_private_chats(self) -> None:
         if not self.confirm_all and not self.confirm("Delete private chats"):
             self.log.warning("Canceled")
             return
         try:
-            chats = await self.get_chats()
-            for chat in chats:
-                if chat.type not in [
-                    enums.ChatType.PRIVATE,
-                    enums.ChatType.BOT,
-                ]:
-                    continue
+            for chat in await self.get_private_chats():
                 self.log.debug(
                     "delete private chat: %d (%s)",
                     chat.id,
                     chat.first_name,
                 )
-                # TODO: нужно ли на всякий случай удалить сообщения?
-                # message_ids = []
-                # async for message in self.client.get_chat_history(
-                #     chat_id=chat.id
-                # ):
-                #     message_ids.append(message.id)
-                # for chunk in self.iter_chunks(message_ids):
-                #     await self.client.delete_messages(
-                #         chat_id=chat.id, message_ids=chunk, revoke=True
-                #     )
                 # https://stackoverflow.com/a/72766038
                 peer = await self.client.resolve_peer(chat.id)
                 self.log.debug(peer)
                 await self.client.invoke(
                     raw.functions.messages.DeleteHistory(
-                        peer=peer, max_id=0, revoke=True
+                        peer=peer,
+                        max_id=0,
+                        revoke=True,
                     )
                 )
             self.log.info("private chats deleted successfully!")
         except Exception as ex:
             self.log.exception(ex)
 
-    async def get_group_chats(self) -> list[types.Chat]:
+    async def clear_private_chats(self) -> None:
+        if not self.confirm_all and not self.confirm("Clear private chats"):
+            self.log.warning("Canceled")
+            return
+        try:
+            for chat in await self.get_private_chats():
+                self.log.debug(
+                    "clear private chat: %d (%s)",
+                    chat.id,
+                    chat.first_name,
+                )
+                # TODO: нужно ли на всякий случай удалить сообщения?
+                message_ids = []
+                async for message in self.client.get_chat_history(
+                    chat_id=chat.id
+                ):
+                    message_ids.append(message.id)
+                for chunk in self.iter_chunks(message_ids):
+                    await self.client.delete_messages(
+                        chat_id=chat.id, message_ids=chunk, revoke=True
+                    )
+            self.log.info("private chats cleared successfully!")
+        except Exception as ex:
+            self.log.exception(ex)
+
+    async def get_group_chats(
+        self,
+    ) -> list[types.Chat]:
         return [
             chat
             for chat in await self.get_chats()
@@ -111,7 +140,10 @@ class Cleaner:
         ]
 
     async def delete_own_messages(self, chat_id: int | str) -> None:
-        self.log.debug("Search own messages group#%s", chat_id)
+        self.log.debug(
+            "Search own messages group#%s",
+            chat_id,
+        )
         message_ids = []
         message: types.Message
         async for message in self.client.search_messages(
@@ -125,10 +157,14 @@ class Cleaner:
                     f"Delete message sequence: {', '.join(map(str, chunk))}"
                 )
                 await self.client.delete_messages(
-                    chat_id=chat_id, message_ids=chunk, revoke=True
+                    chat_id=chat_id,
+                    message_ids=chunk,
+                    revoke=True,
                 )
             self.log.info(
-                "Total deleted messages %s: %d", chat_id, len(message_ids)
+                "Total deleted messages %s: %d",
+                chat_id,
+                len(message_ids),
             )
 
     async def delete_group_messages(self) -> None:
@@ -143,7 +179,10 @@ class Cleaner:
                 self.log.debug("%s - %s", chat.id, chat.title)
                 # Избегаем повторное удаление сообщений в группах с комментариями
                 if chat.id in seen:
-                    self.log.debug("already seen: %s", chat.id)
+                    self.log.debug(
+                        "already seen: %s",
+                        chat.id,
+                    )
                     continue
                 seen.add(chat.id)
                 try:
@@ -151,7 +190,10 @@ class Cleaner:
                     if chat.type == enums.ChatType.CHANNEL:
                         # linked_chat (Chat (https://docs.pyrogram.org/api/types/Chat#pyrogram.types.Chat), optional) – The linked discussion group (in case of channels) or the linked channel (in case of supergroups). Returned only in get_chat() (https://docs.pyrogram.org/api/methods/get_chat.html#pyrogram.Client.get_chat).only in get_chat() (https://docs.pyrogram.org/api/methods/get_chat.html#pyrogram.Client.get_chat).
                         chat_info = await self.client.get_chat(chat_id=chat.id)
-                        if linked_chat := getattr(chat_info, "linked_chat"):
+                        if linked_chat := getattr(
+                            chat_info,
+                            "linked_chat",
+                        ):
                             # self.log.debug(linked_chat)
                             chats.append(linked_chat)
                         # Flood control
@@ -208,7 +250,10 @@ class Cleaner:
     async def dump_chats(self) -> None:
         try:
             chats = await self.get_chats()
-            print("[" + ",".join(map(str, chats)) + "]", flush=True)
+            print(
+                "[" + ",".join(map(str, chats)) + "]",
+                flush=True,
+            )
         except Exception as ex:
             self.log.exception(ex)
 

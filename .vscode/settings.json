@@ -1,6 +1,12 @@
 {
   "python.formatting.provider": "black",
-  "python.formatting.blackArgs": ["-l", "80", "-t", "py310"],
+  "python.formatting.blackArgs": [
+    "--line-length",
+    "79",
+    //"--skip-string-normalization",
+    "--target-version",
+    "py310"
+  ],
   // В Codespaces pylint как-то неправильно работает
   // https://github.com/orgs/community/discussions/46885
   "python.linting.pylintPath": "/home/codespace/.cache/pypoetry/virtualenvs/telegram-cleaner-LgQoTGlN-py3.10/bin/pylint"
