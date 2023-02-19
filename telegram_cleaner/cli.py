@@ -49,7 +49,7 @@ def parse_args(argv: Sequence[str] | None) -> NameSpace:
         "delete_contacts": "delete contacts",
         "delete_group_messages": "delete any type messages in groups including own posts",
         "leave_groups": "leave groups",
-        "delete_private_chats": "delete private chat",
+        "delete_private_chats": "delete private chats",
         "clear_private_chats": "clear private chat messages",
         "dump_chats": "dump chats debug info",
         "dump_me": "dump loggined user debug info",
