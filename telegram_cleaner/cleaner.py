@@ -49,8 +49,8 @@ class Cleaner:
             contacts = await self.client.get_contacts()
             await self.client.delete_contacts([x.id for x in contacts])
             self.log.info("Contacts deleted successfully!")
-        except Exception as e:
-            self.log.exception(e)
+        except Exception as ex:
+            self.log.exception(ex)
 
     async def get_chats(self) -> list[types.Chat]:
         rv = []
@@ -61,7 +61,7 @@ class Cleaner:
 
     async def delete_private_chats(self) -> None:
         if not self.confirm_all and not self.confirm("Delete private chats"):
-            self.log.warn("Canceled")
+            self.log.warning("Canceled")
             return
         try:
             chats = await self.get_chats()
@@ -95,8 +95,8 @@ class Cleaner:
                     )
                 )
             self.log.info("private chats deleted successfully!")
-        except Exception as e:
-            self.log.exception(e)
+        except Exception as ex:
+            self.log.exception(ex)
 
     async def get_group_chats(self) -> list[types.Chat]:
         return [
@@ -133,7 +133,7 @@ class Cleaner:
 
     async def delete_group_messages(self) -> None:
         if not self.confirm_all and not self.confirm("Delete group messages"):
-            self.log.warn("Canceled")
+            self.log.warning("Canceled")
             return
         try:
             chats = await self.get_group_chats()
@@ -180,15 +180,15 @@ class Cleaner:
                     #         "you dont have permission to send messages in grooup#%s",
                     #         chat.id,
                     #     )
-                except errors.ChannelPrivate as e:
-                    self.log.warn(e)
+                except errors.ChannelPrivate as ex:
+                    self.log.warning(ex)
             self.log.info("Group messages deleted successfully!")
-        except Exception as e:
-            self.log.exception(e)
+        except Exception as ex:
+            self.log.exception(ex)
 
     async def leave_groups(self) -> bool:
         if not self.confirm_all and not self.confirm("Leave groups"):
-            self.log.warn("Canceled")
+            self.log.warning("Canceled")
             return
         try:
             chats = await self.get_group_chats()
@@ -196,8 +196,8 @@ class Cleaner:
                 self.log.debug(f"Leave group #{chat.id}")
                 await self.client.leave_chat(chat.id)
             self.log.info("Groups leaved successfully!")
-        except Exception as e:
-            self.log.error(e)
+        except Exception as ex:
+            self.log.error(ex)
 
     async def clean(self) -> None:
         await self.delete_contacts()
@@ -209,20 +209,20 @@ class Cleaner:
         try:
             chats = await self.get_chats()
             print("[" + ",".join(map(str, chats)) + "]", flush=True)
-        except Exception as e:
-            self.log.exception(e)
+        except Exception as ex:
+            self.log.exception(ex)
 
     async def dump_me(self) -> None:
         try:
             print(await self.client.get_me())
-        except Exception as e:
-            self.log.exception(e)
+        except Exception as ex:
+            self.log.exception(ex)
 
     async def logout(self) -> None:
         try:
             print(await self.client.log_out())
-        except Exception as e:
-            self.log.exception(e)
+        except Exception as ex:
+            self.log.exception(ex)
 
     async def __aenter__(self) -> Cleaner:
         await self.client.start()

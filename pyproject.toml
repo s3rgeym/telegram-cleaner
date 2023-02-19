@@ -13,6 +13,7 @@ tgcrypto = "^1.2.5"
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.1.0"
+pylint = "^2.16.2"
 
 [build-system]
 requires = ["poetry-core"]
