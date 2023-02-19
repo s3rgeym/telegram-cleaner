@@ -224,7 +224,7 @@ class Cleaner:
         except Exception as ex:
             self.log.exception(ex)
 
-    async def leave_groups(self) -> bool:
+    async def leave_groups(self) -> None:
         if not self.confirm_all and not self.confirm("Leave groups"):
             self.log.warning("Canceled")
             return
