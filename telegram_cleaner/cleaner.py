@@ -19,6 +19,7 @@ class Cleaner:
     api_id: int | str
     api_hash: str
     _: KW_ONLY
+    keep_chats: list[str | int] = ([],)
     confirm_all: bool = False
     log_level: int | str = logging.DEBUG
 
@@ -71,9 +72,13 @@ class Cleaner:
         return [
             chat
             for chat in await self.get_chats()
+            if chat.type in [enums.ChatType.PRIVATE, enums.ChatType.BOT]
             # Аккаунт поддержки имеет ID#777000, удаление диалога с ним выглядит как взлом
-            if chat.type == enums.ChatType.PRIVATE and not chat.is_support
+            and not chat.is_support
         ]
+
+    def keep_chat(self, chat: types.Chat) -> bool:
+        return chat.id in self.keep_chats or chat.username in self.keep_chats
 
     async def delete_private_chats(self) -> None:
         if not self.confirm_all and not self.confirm("Delete private chats"):
@@ -81,6 +86,8 @@ class Cleaner:
             return
         try:
             for chat in await self.get_private_chats():
+                if self.keep_chat(chat):
+                    continue
                 self.log.debug(
                     "delete private chat: %d (%s)",
                     chat.id,
@@ -106,12 +113,13 @@ class Cleaner:
             return
         try:
             for chat in await self.get_private_chats():
+                if self.keep_chat(chat):
+                    continue
                 self.log.debug(
                     "clear private chat: %d (%s)",
                     chat.id,
                     chat.first_name,
                 )
-                # TODO: нужно ли на всякий случай удалить сообщения?
                 message_ids = []
                 async for message in self.client.get_chat_history(
                     chat_id=chat.id
@@ -167,6 +175,12 @@ class Cleaner:
                 len(message_ids),
             )
 
+    async def get_linked_chat(self, chat: types.Chat) -> types.Chat | None:
+        if chat.type != enums.ChatType.CHANNEL:
+            return None
+        chat_info = await self.client.get_chat(chat_id=chat.id)
+        return getattr(chat_info, "linked_chat", None)
+
     async def delete_group_messages(self) -> None:
         if not self.confirm_all and not self.confirm("Delete group messages"):
             self.log.warning("Canceled")
@@ -176,6 +190,8 @@ class Cleaner:
             seen = set()
             while chats:
                 chat = chats.pop()
+                if self.keep_chat(chat):
+                    continue
                 self.log.debug("%s - %s", chat.id, chat.title)
                 # Избегаем повторное удаление сообщений в группах с комментариями
                 if chat.id in seen:
@@ -187,34 +203,11 @@ class Cleaner:
                 seen.add(chat.id)
                 try:
                     # Каналы имеют группы с комментариями к постам. В них вступать необязательно, а значит в списке чатов они не видны
-                    if chat.type == enums.ChatType.CHANNEL:
-                        # linked_chat (Chat (https://docs.pyrogram.org/api/types/Chat#pyrogram.types.Chat), optional) – The linked discussion group (in case of channels) or the linked channel (in case of supergroups). Returned only in get_chat() (https://docs.pyrogram.org/api/methods/get_chat.html#pyrogram.Client.get_chat).only in get_chat() (https://docs.pyrogram.org/api/methods/get_chat.html#pyrogram.Client.get_chat).
-                        chat_info = await self.client.get_chat(chat_id=chat.id)
-                        if linked_chat := getattr(
-                            chat_info,
-                            "linked_chat",
-                        ):
-                            # self.log.debug(linked_chat)
-                            chats.append(linked_chat)
+                    if linked_chat := await self.get_linked_chat(chat):
+                        # self.log.debug(linked_chat)
+                        chats.append(linked_chat)
                         # Flood control
                         await asyncio.sleep(2.0)
-                    # {
-                    #     "_": "Chat",
-                    #     "id": -1001XXXXXXXXX,
-                    #     ...
-                    #     "permissions": {
-                    #         "_": "ChatPermissions",
-                    #         "can_send_messages": true,
-                    #         "can_send_media_messages": false,
-                    #         "can_send_other_messages": false,
-                    #         "can_send_polls": true,
-                    #         "can_add_web_page_previews": false,
-                    #         "can_change_info": false,
-                    #         "can_invite_users": false,
-                    #         "can_pin_messages": false
-                    #     }
-                    #     ...
-                    # }
                     # if chat.permissions and chat.permissions.can_send_messages:
                     await self.delete_own_messages(chat.id)
                     # else:
@@ -235,6 +228,8 @@ class Cleaner:
         try:
             chats = await self.get_group_chats()
             for chat in chats:
+                if self.keep_chat(chat):
+                    continue
                 self.log.debug(f"Leave group #{chat.id}")
                 await self.client.leave_chat(chat.id)
             self.log.info("Groups leaved successfully!")

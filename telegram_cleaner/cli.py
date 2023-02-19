@@ -8,13 +8,28 @@ from .utils import make_sync
 
 
 class NameSpace(argparse.Namespace):
-    yes_all: bool
+    keep_chats: list[str | int]
+    yes: bool
     verbosity: int
     command: str
 
 
+def normalize_identifier(s: str) -> str | int:
+    return int(s[1:]) if s.startswith("#") else s[s.startswith("@") :]
+
+
+def parse_identifiers(v: str) -> list[str | int]:
+    return list(map(normalize_identifier, v.split(",")))
+
+
 def parse_args(argv: Sequence[str] | None) -> NameSpace:
     parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--keep-chats",
+        help="keep chats with specified identifiers eg #1234567890,@foobar",
+        type=parse_identifiers,
+        default=[],
+    )
     parser.add_argument(
         "-y",
         "--yes",
@@ -34,8 +49,8 @@ def parse_args(argv: Sequence[str] | None) -> NameSpace:
         "delete_contacts": "delete contacts",
         "delete_group_messages": "delete any type messages in groups including own posts",
         "leave_groups": "leave groups",
-        "delete_private_chats": "delete private chat messages with dialogs",
-        "clear_private_chats": "delete private chat messages and keep dialogs",
+        "delete_private_chats": "delete private chat",
+        "clear_private_chats": "clear private chat messages",
         "dump_chats": "dump chats debug info",
         "dump_me": "dump loggined user debug info",
         "logout": "terminate current session",
@@ -57,6 +72,7 @@ async def cli(argv: Sequence[str] | None = None) -> None:
     async with Cleaner(
         api_id=int(getenv("TG_API_ID", 24439609)),
         api_hash=getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d"),
+        keep_chats=args.keep_chats,
         confirm_all=args.yes,
         log_level=log_lvl,
     ) as cleaner:
