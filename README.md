@@ -63,11 +63,11 @@ $ tg-clean -y delete_private_chats
 $ tg-clean
 ```
 
-You can use you custom API_ID and API_HASH ([official apps](https://telegra.ph/telegraph-01-31-6)). Add this lines to ~/.bashrc or ~/.zshrc
+You can use you custom API_ID and API_HASH ([official apps](https://telegra.ph/telegraph-01-31-6)). Add this lines to `~/.bashrc` or `~/.zshrc`:
 
 ```bash
 export TG_API_ID=6
 export TG_API_HASH=eb06d4abfb49dc3eeb1aeb98ae0f581e
 ```
 
-Also you can use .env files with zsh dotenv plugin.
+Also you can use `.env` file with zsh dotenv plugin.
