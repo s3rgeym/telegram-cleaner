@@ -42,7 +42,7 @@ $ tg-clean -vv delete_group_messages
 $ tg-clean -y delete_private_chats
 
 # delete all your messages of any type in chats except those specified
-$ tg-clean --keep-chats "#1234567890,#1234567891,@durovs"
+$ tg-clean --keep-chats 1234567890,1234567891,@durovs
 ```
 
 You can use custom **API_ID** and **API_HASH** ([official apps](https://telegra.ph/telegraph-01-31-6)). Add this lines to `~/.bashrc` or `~/.zshrc`:

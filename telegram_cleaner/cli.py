@@ -15,7 +15,10 @@ class NameSpace(argparse.Namespace):
 
 
 def normalize_identifier(s: str) -> str | int:
-    return int(s[1:]) if s.startswith("#") else s[s.startswith("@") :]
+    try:
+        return int(s)
+    except ValueError:
+        return s[s.startswith("@") :]
 
 
 def parse_identifiers(v: str) -> list[str | int]:
@@ -26,7 +29,7 @@ def parse_args(argv: Sequence[str] | None) -> NameSpace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--keep-chats",
-        help="keep chats with specified identifiers eg #1234567890,@foobar",
+        help="keep chats with specified identifiers eg 1234567890,@foobar",
         type=parse_identifiers,
         default=[],
     )
