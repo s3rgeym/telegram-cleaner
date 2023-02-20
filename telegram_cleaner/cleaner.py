@@ -179,7 +179,11 @@ class Cleaner:
         chat_info = await self.client.get_chat(chat_id=chat.id)
         return getattr(chat_info, "linked_chat", None)
 
+    async def get_reply_chats(self):
+        raise NotImplementedError
+
     async def delete_group_messages(self) -> None:
+        # TODO: очищать чаты, где есть ответы см get_reply_chats
         if not self.confirm_all and not self.confirm("Delete group messages"):
             self.logger.warning("Canceled")
             return
