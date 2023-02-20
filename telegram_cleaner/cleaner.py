@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import logging
 from dataclasses import KW_ONLY, dataclass, field
+from pathlib import Path
 from typing import Any, Iterator
 
 from pyrogram import (
@@ -28,6 +29,7 @@ class Cleaner:
             __package__,
             api_id=self.api_id,
             api_hash=self.api_hash,
+            workdir=str(Path.cwd()),
             # app_version=self.app_version,
             # device_model=self.device_model,
             # system_version=self.system_version,
