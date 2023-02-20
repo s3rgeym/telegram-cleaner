@@ -75,7 +75,8 @@ async def cli(argv: Sequence[str] | None = None) -> None:
     logger = logging.getLogger(__name__)
     logger.setLevel(log_level)
     handler = AnsiColorHandler()
-    handler.setFormatter(logging.Formatter("%(levelname)s %(message)s"))
+    # [C] Critical Error Occurred
+    handler.setFormatter(logging.Formatter("[%(levelname).1s] %(message)s"))
     logger.addHandler(handler)
     async with Cleaner(
         api_id=int(getenv("TG_API_ID", 24439609)),
