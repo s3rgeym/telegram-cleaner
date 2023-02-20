@@ -11,12 +11,12 @@ def make_sync(func: Awaitable) -> Callable:
     return wrapper
 
 
-# unuses
+# unused
 def truncate_string(s: str, limit: int = 75, ellipsis: str = "…") -> str:
     return s[:limit] + bool(s[limit:]) * ellipsis
 
 
-# unuses
+# unused
 def colorize(s: str, color: str) -> str:
     color_map = {
         "black": 30,
