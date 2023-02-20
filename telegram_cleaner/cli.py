@@ -5,6 +5,7 @@ from typing import Sequence
 
 from .cleaner import Cleaner
 from .utils import make_sync
+from .color_handler import AnsiColorHandler
 
 
 class NameSpace(argparse.Namespace):
@@ -18,7 +19,7 @@ def normalize_identifier(s: str) -> str | int:
     try:
         return int(s)
     except ValueError:
-        return (s := s.strip())[s.startswith('@') :]
+        return (s := s.strip())[s.startswith("@") :]
 
 
 def parse_identifiers(v: str) -> list[str | int]:
@@ -69,14 +70,19 @@ def parse_args(argv: Sequence[str] | None) -> NameSpace:
 
 @make_sync
 async def cli(argv: Sequence[str] | None = None) -> None:
-    logging.basicConfig()
     args = parse_args(argv)
-    log_lvl = max(logging.DEBUG, logging.WARNING - args.verbosity * 10)
+    log_level = max(logging.DEBUG, logging.WARNING - args.verbosity * 10)
+    logger = logging.getLogger(__name__)
+    logger.setLevel(log_level)
+    handler = AnsiColorHandler()
+    formatter = logging.Formatter("%(levelname)s %(message)s")
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
     async with Cleaner(
         api_id=int(getenv("TG_API_ID", 24439609)),
         api_hash=getenv("TG_API_HASH", "425c5e04e10edd2913e971b64a82186d"),
         keep_chats=args.keep_chats,
         confirm_all=args.yes,
-        log_level=log_lvl,
+        logger=logger,
     ) as cleaner:
         await getattr(cleaner, args.command)()
