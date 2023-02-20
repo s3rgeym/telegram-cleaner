@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from dataclasses import KW_ONLY, dataclass
+from dataclasses import KW_ONLY, dataclass, field
 from typing import Any, Iterator
 
 from pyrogram import (
@@ -19,7 +19,7 @@ class Cleaner:
     api_id: int | str
     api_hash: str
     _: KW_ONLY
-    keep_chats: list[str | int] = ([],)
+    keep_chats: list[str | int] = field(default_factory=list)
     confirm_all: bool = False
     logger: logging.Logger = logging.root
 
