@@ -30,7 +30,7 @@ def parse_args(argv: Sequence[str] | None) -> NameSpace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--keep-chats",
-        help="keep chats with specified identifiers eg 1234567890,@foobar",
+        help="keep chats with specified identifiers/usernames eg. 1234567890,@foobar",
         type=parse_identifiers,
         default=[],
     )
