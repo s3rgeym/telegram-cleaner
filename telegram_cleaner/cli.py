@@ -75,8 +75,7 @@ async def cli(argv: Sequence[str] | None = None) -> None:
     logger = logging.getLogger(__name__)
     logger.setLevel(log_level)
     handler = AnsiColorHandler()
-    formatter = logging.Formatter("%(levelname)s %(message)s")
-    handler.setFormatter(formatter)
+    handler.setFormatter(logging.Formatter("%(levelname)s %(message)s"))
     logger.addHandler(handler)
     async with Cleaner(
         api_id=int(getenv("TG_API_ID", 24439609)),
