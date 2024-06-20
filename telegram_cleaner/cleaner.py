@@ -74,6 +74,8 @@ class Cleaner:
     def keep_chat(self, chat: types.Chat) -> bool:
         return (
             chat.id in self.keep_chats
+            # govnofix для cli
+            or str(chat.id) in self.keep_chats
             # Попытка очистить ответы приводит к убийству ВСЕХ СЕССИЙ
             or getattr(chat, "username", None) in [*self.keep_chats, "replies"]
             # Аккаунт поддержки имеет ID#777000, удаление диалога с ним выглядит как взлом
